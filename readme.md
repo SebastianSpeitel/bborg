@@ -1,13 +1,13 @@
 # bborg
 
-Bash script for automating borg.
+Bash script for automating [borgbackup](https://www.borgbackup.org/).
 
 ## Features
 
 - A single config for all your backups
 - Just a single bash script
 - Still easy to configure for just a single backup
-- familiar SSH config syntax
+- Familiar SSH config syntax
 
 ## Configuration
 
