@@ -87,9 +87,12 @@ function read_config(){
             reset
             BACKUP[name]=${line#*Backup }
             
-        elif [[ $line == "End"  ]];
+        elif [[ $line == "End" ]];
         then
-            BACKUP[name]=${BACKUP[name]:-"default"}
+            if [[ -z ${BACKUP[name]} ]];
+            then
+                BACKUP[name]=default
+            fi
             backup
             break
             
