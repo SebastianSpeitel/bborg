@@ -48,7 +48,7 @@ Path to backup.
 
 #### `Compression`
 
-Comprssion to use.
+Compression to use.
 See `borg help compression` for more information.
 
 #### `Archive`
