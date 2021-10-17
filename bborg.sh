@@ -89,6 +89,7 @@ function read_config(){
             
         elif [[ $line == "End"  ]];
         then
+            BACKUP[name]=${BACKUP[name]:-"default"}
             backup
             break
             
