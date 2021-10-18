@@ -3,31 +3,47 @@ VERSION=1.0.0
 
 function create(){
     
-    local command="borg create --progress --stats"
-    if [[ -n ${BACKUP[compression]} ]]; then
+    local command="borg create"
+    if [[ -n ${BACKUP[compression]} ]];
+    then
         command="$command --compression ${BACKUP[compression]}"
+    fi
+
+    if [[ ${BACKUP[progress]} == "yes" ]];
+    then
+        command="$command --progress"
     fi
     
     local ignorefile="${BACKUP[ignorefile]}"
     if [[ -n $ignorefile ]]; then
-        if [[ $ignorefile != /* ]]; then
+        if [[ $ignorefile != /* ]];
+        then
             ignorefile="${BACKUP[path]}/$ignorefile"
         fi
         
         local realignorefile=$(eval echo $ignorefile)
         
-        if [[ -f $realignorefile ]]; then
+        if [[ -f $realignorefile ]];
+        then
             command="$command --exclude-from $ignorefile"
         fi
     fi
+
+    if [[ -n ${BACKUP[extraargs]} ]];
+    then
+        command="$command ${BACKUP[extraargs]}"
+    fi
     
-    if [[ -n ${BACKUP[passphrase]} ]]; then
+    if [[ -n ${BACKUP[passphrase]} ]];
+    then
         export BORG_PASSPHRASE="${BACKUP[passphrase]}"
     fi
     
-    if [[ -n ${BACKUP[passcommand]} ]]; then
+    if [[ -n ${BACKUP[passcommand]} ]];
+    then
         export BORG_PASSPHRASE="$(eval ${BACKUP[passcommand]})"
     fi
+
     
     command="$command ${BACKUP[repo]}::${BACKUP[archive]} ${BACKUP[path]}"
     
@@ -123,6 +139,14 @@ function read_config(){
         elif [[ $line =~ ^\s*IgnoreFile\  ]];
         then
             BACKUP[ignorefile]=${line#*IgnoreFile }
+
+        elif [[ $line =~ ^\s*Progress\  ]];
+        then
+            BACKUP[progress]=${line#*Progress }
+
+        elif [[ $line =~ ^\s*ExtraArgs\  ]];
+        then
+            BACKUP[extraargs]=${line#*ExtraArgs }
             
         else
             echo "Unknown option: $line" >&2

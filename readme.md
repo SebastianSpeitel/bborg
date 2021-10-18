@@ -71,3 +71,11 @@ Passphrase passed to borg.
 #### `PassCommand`
 
 When set, the output of this command will be used as the passphrase.
+
+#### `Progress`
+
+Pass `--progress` to borg to display progress.
+
+#### `ExtraArgs`
+
+Additional arguments passed to borg.
