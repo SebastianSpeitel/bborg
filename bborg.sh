@@ -54,6 +54,27 @@ function create(){
     
 }
 
+function list(){
+    local command="borg list"
+
+    if [[ -n ${BACKUP[passphrase]} ]];
+    then
+        export BORG_PASSPHRASE="${BACKUP[passphrase]}"
+    fi
+    
+    if [[ -n ${BACKUP[passcommand]} ]];
+    then
+        export BORG_PASSPHRASE="$(eval ${BACKUP[passcommand]})"
+    fi
+    
+    command="$command ${BACKUP[repo]}"
+    
+    echo "Listing archives for ${BACKUP[name]}"
+    
+    [[ -z "$DRYRUN" ]] && eval "$command"
+    [[ -n "$DRYRUN" ]] && echo "[DRYRUN] $command"
+}
+
 function read_config(){
     
     local -A BACKUP
@@ -77,8 +98,18 @@ function read_config(){
     }
     
     backup(){
-        # echo Backup: ${BACKUP[@]}
-        create
+        case "$COMMAND" in
+            create)
+                create
+                ;;
+            list)
+                list
+                ;;
+            *)
+                echo "Unknown command: $COMMAND" >&2
+                exit 1
+                ;;
+        esac
     }
     
     reset
@@ -172,7 +203,7 @@ function parse_options(){
                 shift
             ;;
             -h|--help)
-                echo "Usage: $0 [--dry-run] [--verbose] [--help]"
+                echo "Usage: $0 [--dry-run] [--verbose] [--help] [<command>]"
                 exit 0
             ;;
             --version)
@@ -185,6 +216,7 @@ function parse_options(){
             ;;
             --)
                 shift
+                COMMAND=${1:-create}
                 break
             ;;
             *)
