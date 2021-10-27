@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Release on Github
+    runs-on: "ubuntu-latest"
+    
+    steps:
+      - name: Release please
+        id: release
+        uses: GoogleCloudPlatform/release-please-action@v2
+        with:
+          release-type: simple
+          command: github-release
+
+  release-pr:
+    name: Create release PR
+    runs-on: "ubuntu-latest"
+    outputs:
+      pr: ${{ steps.pr.outputs.pr }}
+    
+    steps:
+      - name: Release please
+        id: pr
+        uses: GoogleCloudPlatform/release-please-action@v2
+        with:
+          release-type: simple
+          command: release-pr
+          
+  apply-version:
+    name: Update release PR
+    runs-on: "ubuntu-latest"
+    needs: release-pr
+    if: ${{ needs.release-pr.outputs.pr }}
+    
+    steps:
+      - name: Get PR info
+        id: query-pr
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const [owner,repo]="${{ github.repository }}".split('/');
+            const {data:pr} = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: ${{ needs.release-pr.outputs.pr }}
+            });
+            core.setOutput('ref', pr.head.ref);
+      - name: Checkout PR
+        uses: actions/checkout@v2.3.5
+        with:
+          ref: ${{ steps.query-pr.outputs.ref }}
+          fetch-depth: 2 # Required to be able to amend
+      - name: Apply version
+        run: |
+          VERSION=$(cat version.txt)
+          echo $VERSION
+          sed -E -i "s/VERSION=[0-9]+\.[0-9]+\.[0-9]+/VERSION=$VERSION/" bborg.sh
+      - name: Update commit
+        run: |
+          git add bborg.sh
+          git rm version.txt
+      - name: Amend commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit --amend --no-edit
+      - name: Push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.query-pr.outputs.ref }}
+          force: true
