@@ -214,7 +214,21 @@ function parse_options(){
             ;;
             --)
                 shift
-                COMMAND=${1:-create}
+                
+                case "$1" in
+                    create|c)
+                        COMMAND=create
+                        shift
+                    ;;
+                    list|l)
+                        COMMAND=list
+                        shift
+                    ;;
+                    *)
+                        COMMAND=create
+                    ;;
+                esac
+                
                 break
             ;;
             *)
