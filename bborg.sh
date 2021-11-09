@@ -8,7 +8,7 @@ function create(){
     then
         command="$command --compression ${BACKUP[compression]}"
     fi
-
+    
     if [[ ${BACKUP[progress]} == "yes" ]];
     then
         command="$command --progress"
@@ -28,7 +28,7 @@ function create(){
             command="$command --exclude-from $ignorefile"
         fi
     fi
-
+    
     if [[ -n ${BACKUP[extraargs]} ]];
     then
         command="$command ${BACKUP[extraargs]}"
@@ -43,7 +43,7 @@ function create(){
     then
         export BORG_PASSPHRASE="$(eval ${BACKUP[passcommand]})"
     fi
-
+    
     
     command="$command ${BACKUP[repo]}::${BACKUP[archive]} ${BACKUP[path]}"
     
@@ -56,7 +56,7 @@ function create(){
 
 function list(){
     local command="borg list"
-
+    
     if [[ -n ${BACKUP[passphrase]} ]];
     then
         export BORG_PASSPHRASE="${BACKUP[passphrase]}"
@@ -99,14 +99,14 @@ function read_config(){
         case "$COMMAND" in
             create)
                 create
-                ;;
+            ;;
             list)
                 list
-                ;;
+            ;;
             *)
                 echo "Unknown command: $COMMAND" >&2
                 exit 1
-                ;;
+            ;;
         esac
     }
     
@@ -168,11 +168,11 @@ function read_config(){
         elif [[ $line =~ ^\s*IgnoreFile\  ]];
         then
             BACKUP[ignorefile]=${line#*IgnoreFile }
-
+            
         elif [[ $line =~ ^\s*Progress\  ]];
         then
             BACKUP[progress]=${line#*Progress }
-
+            
         elif [[ $line =~ ^\s*ExtraArgs\  ]];
         then
             BACKUP[extraargs]=${line#*ExtraArgs }
@@ -241,7 +241,7 @@ function parse_options(){
 
 
 declare -A GLOBAL_OPTIONS
-    
+
 parse_options "$@"
 
 
