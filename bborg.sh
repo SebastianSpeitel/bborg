@@ -78,22 +78,20 @@ function list(){
 function read_config(){
     
     local -A BACKUP
-    local -A GLOBAL
-    
-    [[ -n $BORG_REPO ]] && GLOBAL[repo]=$BORG_REPO
-    GLOBAL[path]="~"
-    GLOBAL[archive]=$(date -I)
-    [[ -n $BORG_COMPRESSION ]] && GLOBAL[compression]=$BORG_COMPRESSION
-    [[ -n $BORG_PASSPHRASE ]] && GLOBAL[passphrase]=$BORG_PASSPHRASE
-    [[ -n $BORG_PASSCOMMAND ]] && GLOBAL[passcommand]=$BORG_PASSCOMMAND
-    GLOBAL[ignorefile]=".borgignore"
+    [[ -n $BORG_REPO ]] && GLOBAL_OPTIONS[repo]=$BORG_REPO
+    GLOBAL_OPTIONS[path]="~"
+    GLOBAL_OPTIONS[archive]=$(date -I)
+    [[ -n $BORG_COMPRESSION ]] && GLOBAL_OPTIONS[compression]=$BORG_COMPRESSION
+    [[ -n $BORG_PASSPHRASE ]] && GLOBAL_OPTIONS[passphrase]=$BORG_PASSPHRASE
+    [[ -n $BORG_PASSCOMMAND ]] && GLOBAL_OPTIONS[passcommand]=$BORG_PASSCOMMAND
+    GLOBAL_OPTIONS[ignorefile]=".borgignore"
     
     reset(){
         for opt in "${!BACKUP[@]}"; do
             unset BACKUP["$opt"]
         done
-        for opt in "${!GLOBAL[@]}"; do
-            BACKUP["$opt"]=${GLOBAL["$opt"]}
+        for opt in "${!GLOBAL_OPTIONS[@]}"; do
+            BACKUP["$opt"]=${GLOBAL_OPTIONS["$opt"]}
         done
     }
     
@@ -126,7 +124,7 @@ function read_config(){
             then
                 # Set options globaly
                 for opt in "${!BACKUP[@]}"; do
-                    GLOBAL["$opt"]=${BACKUP["$opt"]}
+                    GLOBAL_OPTIONS["$opt"]=${BACKUP["$opt"]}
                 done
             else
                 backup
@@ -227,6 +225,9 @@ function parse_options(){
     done
 }
 
+
+declare -A GLOBAL_OPTIONS
+    
 parse_options "$@"
 
 
