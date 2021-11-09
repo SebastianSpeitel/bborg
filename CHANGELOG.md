@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.3.1](https://www.github.com/SebastianSpeitel/bborg/compare/v1.3.0...v1.3.1) (2021-11-09)
+
+
+### Bug Fixes
+
+* dryrun exiting after first backup ([c3c79c5](https://www.github.com/SebastianSpeitel/bborg/commit/c3c79c546dcf9d3fe73a68d507fc3df2d103a650))
+
 ## [1.3.0](https://www.github.com/SebastianSpeitel/bborg/compare/v1.2.0...v1.3.0) (2021-11-09)
 
 
