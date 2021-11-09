@@ -49,7 +49,7 @@ function create(){
     
     echo "Creating backup ${BACKUP[name]}"
     
-    [[ -z "$DRYRUN" ]] && eval "$command"
+    [[ -z "$DRYRUN" ]] && eval "$command" || exit
     [[ -n "$DRYRUN" ]] && echo "[DRYRUN] $command"
     
 }
@@ -71,7 +71,7 @@ function list(){
     
     echo "Listing archives for ${BACKUP[name]}"
     
-    [[ -z "$DRYRUN" ]] && eval "$command"
+    [[ -z "$DRYRUN" ]] && eval "$command" || exit
     [[ -n "$DRYRUN" ]] && echo "[DRYRUN] $command"
 }
 
