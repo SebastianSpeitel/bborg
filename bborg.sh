@@ -177,6 +177,12 @@ function read_config(){
         then
             BACKUP[extraargs]=${line#*ExtraArgs }
             
+            # Append global extra args
+            if [[ -n ${GLOBAL_OPTIONS[extraargs]} ]];
+            then
+                BACKUP[extraargs]="${BACKUP[extraargs]} ${GLOBAL_OPTIONS[extraargs]}"
+            fi
+            
         else
             echo "Unknown option: $line" >&2
         fi
@@ -229,6 +235,7 @@ function parse_options(){
                     ;;
                 esac
                 
+                GLOBAL_OPTIONS[extraargs]=${@}
                 break
             ;;
             *)
